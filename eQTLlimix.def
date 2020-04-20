@@ -1,0 +1,26 @@
+Bootstrap:docker
+From: continuumio/miniconda3
+
+######################## Limix based qQTL mapping ###########################
+
+%runscript
+    export PATH=/opt/conda/bin:${PATH}
+    /bin/bash
+%post
+    export PATH=/opt/conda/bin:${PATH}
+    git clone https://github.com/single-cell-genetics/limix_qtl.git
+    # conda packages
+    conda config --add channels conda-forge
+    pip install limix==2.0.6
+    conda install -c conda-forge pytest
+    conda install -c conda-forge pytables
+    conda install -c conda-forge bgen-reader
+    conda install -c conda-forge matplotlib-venn
+    conda install -c conda-forge scikit-learn==0.19.2
+    conda install -c conda-forge numpy-sugar
+    # R
+    apt-get -y install r-base
+    R --slave -e 'install.packages(c("BiocManager","dplyr","readr"))'
+    R --slave -e 'BiocManager::install(c("qvalue","multtest","rhdf5"))'
+
+##############################################################################
